@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.Controller;
 
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,16 +16,16 @@ import java.security.Principal;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
-    private final RoleService roleService;
+    private final UserDetailsService userDetailsService;
 
-    public UserController(UserService userService, RoleService roleService) {
+    public UserController(UserService userService, UserDetailsService userDetailsService) {
         this.userService = userService;
-        this.roleService = roleService;
+        this.userDetailsService = userDetailsService;
     }
 
     @GetMapping("")
     public String index(Principal principal, Model model) {
-        model.addAttribute("user", userService.getUserByUsername(principal.getName()).stream().findFirst());
+        model.addAttribute("myUser", userDetailsService.loadUserByUsername(principal.getName()));
         return "user/index";
     }
 }

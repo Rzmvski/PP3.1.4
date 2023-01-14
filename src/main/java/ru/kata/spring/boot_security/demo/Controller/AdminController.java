@@ -1,6 +1,8 @@
 package ru.kata.spring.boot_security.demo.Controller;
 
 import javax.validation.Valid;
+
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -10,6 +12,7 @@ import ru.kata.spring.boot_security.demo.Service.RoleService;
 import ru.kata.spring.boot_security.demo.Service.UserService;
 import ru.kata.spring.boot_security.demo.Util.UserValidator;
 
+import java.security.Principal;
 import java.util.List;
 
 
@@ -19,16 +22,19 @@ public class AdminController {
     private final UserService userService;
     private final RoleService roleService;
     private final UserValidator userValidator;
-    public AdminController(UserService userService, RoleService roleService, UserValidator userValidator) {
+    private final UserDetailsService userDetailsService;
+    public AdminController(UserService userService, RoleService roleService,
+                           UserValidator userValidator, UserDetailsService userDetailsService) {
         this.userService = userService;
         this.roleService = roleService;
         this.userValidator = userValidator;
+        this.userDetailsService = userDetailsService;
     }
     @GetMapping("")
-    public String index(@ModelAttribute("user") User user, Model model) {
-        List<User> users = userService.getAllUsers();
+    public String index(@ModelAttribute("user") User user, Principal principal, Model model) {
+        model.addAttribute("myUser", userDetailsService.loadUserByUsername(principal.getName()));
         model.addAttribute("roles", roleService.getAllRoles());
-        model.addAttribute("users", users);
+        model.addAttribute("users", userService.getAllUsers());
         return "admin/index";
     }
     @PostMapping("/")

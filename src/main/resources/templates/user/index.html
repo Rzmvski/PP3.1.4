@@ -14,9 +14,9 @@
         <div class="row">
             <nav class="navbar navbar-dark bg-dark">
                 <div class="text-white fs-6 ps-4">
-                    <span class="fw-bold" sec:authentication="principal.username">#username</span>
-                    with roles: <span th:each="authority : ${#authentication.getAuthorities()}"
-                                      th:text="${authority.getAuthority().replaceFirst('ROLE_', '') + ' '}">#roles</span>
+                    <span class="fw-bold" th:text="${myUser.getUsername()}">#username</span>
+                    with roles: <span th:each="authority : ${myUser.getAuthorities()}"
+                                      th:text="${' ' + authority.getAuthority().toString().replaceAll('ROLE_', '')}">#roles</span>
                 </div>
                 <div>
                     <form th:action="@{/logout}" th:method="POST">
@@ -56,14 +56,15 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <th scope="row" th:text="${user.get().id}"></th>
-                                <td th:text="${user.get().username}"></td>
-                                <td th:text="${user.get().firstName}"></td>
-                                <td th:text="${user.get().lastName}"></td>
-                                <td th:text="${user.get().age}"></td>
-                                <td th:text="${user.get().email}"></td>
+                                <th scope="row" th:text="${myUser.getId()}"></th>
+                                <td th:text="${myUser.getUsername()}"></td>
+                                <td th:text="${myUser.getFirstName()}"></td>
+                                <td th:text="${myUser.getLastName()}"></td>
+                                <td th:text="${myUser.getAge()}"></td>
+                                <td th:text="${myUser.getEmail()}"></td>
                                 <td>
-                                    <th:block th:each="role : ${user.get().roles}" th:text="${role.toString() + ' '}">
+                                    <th:block th:each="authority : ${myUser.getAuthorities()}"
+                                              th:text="${' ' + authority.getAuthority().toString().replaceAll('ROLE_', '')}">
                                     </th:block>
                                 </td>
                             </tr>
